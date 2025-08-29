@@ -1,15 +1,28 @@
 import os
 import json
 import time
+import hvac
 from dotenv import load_dotenv
-from vault_utils import login
 load_dotenv()
+
+VAULT_ADDR = os.getenv("VAULT_ADDR")
+VAULT_NAMESPACE = os.getenv("VAULT_NAMESPACE")
 
 BASE_FOLDER = os.getenv("BASE_FOLDER")
 INTERMEDIARY_FOLDERS = os.getenv("INTERMEDIARY_FOLDERS")
 FOLDERS = os.getenv("FOLDERS").split(",")
 
 EXPORT_DIR = "./vault-export"
+
+def ensure_login():
+    client_args = dict(url=VAULT_ADDR, namespace=VAULT_NAMESPACE)
+    client = hvac.Client(**client_args)
+
+    if client.is_authenticated():
+        print("\nAlready logged to Vault\n")
+        return client
+
+    raise Exception("Client is not authenticated. Please login using 'login_vault.py' first.")
 
 def update_vault(client):
     with open(os.path.join(EXPORT_DIR, "export_time.txt"), "r") as f:
@@ -53,5 +66,5 @@ def update_vault(client):
         f.write(str(time.time()))
 
 if __name__ == "__main__":
-    client = login()
+    client = ensure_login()
     update_vault(client)

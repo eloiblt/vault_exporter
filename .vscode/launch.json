@@ -17,6 +17,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/src/update_vault.py",
       "console": "integratedTerminal",
+    },
+    {
+      "name": "Debug login_vault.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/login_vault.py",
+      "console": "integratedTerminal",
     }
   ]
 }

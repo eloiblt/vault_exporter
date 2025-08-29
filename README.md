@@ -5,6 +5,9 @@ Scripts for exporting/importing secrets from Hashicorp Vault, while preserving t
 > This script assumes that the vault command is installed and available in the path.
 
 ```python
+# Login to Vault using OIDC
+python ./src/login_vault.py
+
 # Generates the same tree structure as the target Vault in the current folder.
 python ./src/export_vault.py
 

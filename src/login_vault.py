@@ -12,11 +12,11 @@ def login():
     client = hvac.Client(**client_args)
 
     if client.is_authenticated():
-        print("\nSuccessfully logged in via Vault CLI\n")
+        print("\nAlready logged to Vault\n")
         return client
 
     login_cmd = [
-        "vault.exe", "login",
+        "vault", "login",
         f"-namespace={VAULT_NAMESPACE}",
         f"-address={VAULT_ADDR}",
         "-method=oidc"
@@ -24,6 +24,10 @@ def login():
     result = subprocess.run(login_cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise Exception(f"Vault CLI login failed: {result.stderr}")
-
     print("\nSuccessfully logged in via Vault CLI\n")
+
+
     return client
+
+if __name__ == "__main__":
+    login()
