@@ -22,7 +22,7 @@ def ensure_login():
         print("\nAlready logged to Vault\n")
         return client
 
-    raise Exception("Client is not authenticated. Please login using 'login_vault.py' first.")
+    raise Exception()
 
 def remove_old_exports():
     for item in os.listdir("."):
@@ -55,20 +55,27 @@ def export_path(client, path=""):
                 with open(file_path, "w", encoding="utf-8") as f:
                     json.dump(secret, f, indent=2, ensure_ascii=False)
 
+                with open(os.path.join(EXPORT_DIR, "infos.txt"), "a") as f:
+                    mtime = os.path.getmtime(file_path)
+                    f.write(f"{file_path} --- {str(mtime)}\n")
+
     except hvac.exceptions.InvalidPath:
         print(f"Aucun secret trouvé à : {path}")
         pass
 
 if __name__ == "__main__":
-    client = ensure_login()
+    start_time = time.time()
+
+    try:
+        client = ensure_login()
+    except Exception as e:
+        print("Client is not authenticated. Please login using 'login_vault.py' first.")
+        exit(1)
+
     remove_old_exports()
 
     print("Export de Vault en cours...")
     for env in FOLDERS:
         export_path(client, f"{INTERMEDIARY_FOLDERS}/{env}/")
 
-    with open(os.path.join(EXPORT_DIR, "export_time.txt"), "w") as f:
-        f.write(str(time.time()))
-
-    time.sleep(0.1)
-    print("Export terminé")
+    print(f"Export terminé. Durée totale du script : {time.time() - start_time:.2f}s\n")
